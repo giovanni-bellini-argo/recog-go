@@ -2,15 +2,17 @@
 
 This is a Go implementation of the [Recog](https://github.com/rapid7/recog/) library and fingerprint database from Rapid7.
 
-This package requires a checkout of the recog repository in order to build.
-
 Recog-Go is open source, please see the [LICENSE](https://raw.githubusercontent.com/runZeroInc/recog-go/master/LICENSE) file for more information.
-
-The [recog_match](cmd/recog_match/main.go) utility contains a working example
 
 To build and install:
 ```
-$ git clone https://github.com/rapid7/recog.git /path/to/recog
-$ RECOG_XML=/path/to/recog/xml go generate
-$ go install . ./cmd/...
+$ git clone https://github.com/giovanni-bellini-argo/recog-go.git /path/to/recog
+$ go install .
 ```
+
+# Purpose
+
+This repo has as goal to build a tool to make recog-go a standalone to implement in other projects, as well as to make some custom variations
+
+# variations
+1. modifyed the pattern matching strings (regex) to match without the ^ and $ anchors constraints
