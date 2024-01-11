@@ -1,10 +1,9 @@
-package recog
+package main
 
 import (
 	"encoding/base64"
 	"encoding/xml"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -66,6 +65,12 @@ func (fp *Fingerprint) Normalize() error {
 
 	// Workaround for recog #209 (use of \u0000 in telnet_banners.xml)
 	fp.Pattern = strings.Replace(fp.Pattern, "\\u0000", "\\x00", -1)
+
+	// takes off the ^ and $ anchors from the regex
+	re := regexp.MustCompile("^\\^")
+	fp.Pattern = re.ReplaceAllString(fp.Pattern, "^.*?")
+	re = regexp.MustCompile("^\\$$")
+	fp.Pattern = re.ReplaceAllString(fp.Pattern, ".*?$")
 
 	// Using (?m) also implies (?s), set the option
 	// Note: Ruby does not support explicit '(?s)'
@@ -343,7 +348,7 @@ func (fdb *FingerprintDB) MatchAll(data string) []*FingerprintMatch {
 func LoadFingerprintDBFromFile(fpath string) (FingerprintDB, error) {
 	fdb := FingerprintDB{}
 
-	xmlData, err := ioutil.ReadFile(fpath)
+	xmlData, err := os.ReadFile(fpath)
 	if err != nil {
 		fdb.DebugLogf("failed to load fdb from file %s: %s", fpath, err)
 		return fdb, err
