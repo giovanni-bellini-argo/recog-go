@@ -58,12 +58,13 @@ func main() {
 	var args struct {
 		InputFile  string `arg:"-i,--input,required" help:"Input json file path"`
 		OutputFile string `arg:"-o,--output" default:"./result.json" help:"Output json file path"`
+		XMLFolder  string `arg:"-x,--xml" default:"./xml" help:"folder containing the XML files"`
 	}
 	arg.MustParse(&args)
 
 	/////////// Load XML Files ///////////
 	var files []string
-	err := filepath.Walk("./xml", visit(&files))
+	err := filepath.Walk(args.XMLFolder, visit(&files))
 	if err != nil {
 		log.Fatal(err)
 	}

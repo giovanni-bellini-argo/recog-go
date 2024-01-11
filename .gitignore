@@ -1,2 +1,4 @@
 **/.DS_Store
 result.json
+*.exe
+recog-go
