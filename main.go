@@ -6,6 +6,8 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+
+	"github.com/alexflint/go-arg"
 )
 
 func visit(files *[]string) filepath.WalkFunc {
@@ -49,30 +51,24 @@ type HostData struct {
 	Recog   []map[string]string
 }
 
-// type NewHostData struct {
-// 	Port    int
-// 	Results Results
-// 	Banner  string
-// 	  []map[string]string
-// }
-
 type NewHosts map[string][]*HostData
 
-// type ProcessedHost struct {
-// 	Ip []map[string][]NewHostData
-// }
-
 func main() {
-	var files []string
-	if len(os.Args) < 2 {
-		log.Fatalf("missing: xml directory")
+	/////////// Args ///////////
+	var args struct {
+		InputFile  string `arg:"-i,--input,required" help:"Input json file path"`
+		OutputFile string `arg:"-o,--output" default:"./result.json" help:"Output json file path"`
 	}
+	arg.MustParse(&args)
 
-	err := filepath.Walk(os.Args[1], visit(&files))
+	/////////// Load XML Files ///////////
+	var files []string
+	err := filepath.Walk("./xml", visit(&files))
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	/////////// Load Fingerprints ///////////
 	var fingerprints []FingerprintDB
 	for _, file := range files {
 		fdb, err := LoadFingerprintDBFromFile(file)
@@ -82,20 +78,23 @@ func main() {
 		fingerprints = append(fingerprints, fdb)
 	}
 
+	/////////// Load Input File Struct ///////////
 	var hosts NewHosts
-	byteValue, _ := os.ReadFile(os.Args[2])
+	byteValue, _ := os.ReadFile(args.InputFile)
 	err = json.Unmarshal(byteValue, &hosts)
 	if err == nil {
 		for _, data := range hosts {
 			for _, port := range data {
+				// adds fingerprints to loaded struct
 				port.Recog = fingerprint(fingerprints, port.Banner)
 			}
 		}
 	}
 
+	/////////// Write Results To File ///////////
 	j, err := json.MarshalIndent(hosts, "", "    ")
 	if err != nil {
 		fmt.Println(err)
 	}
-	os.WriteFile("result.json", j, 0644)
+	os.WriteFile(args.OutputFile, j, 0644)
 }
