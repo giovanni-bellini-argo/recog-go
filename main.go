@@ -40,13 +40,9 @@ func fingerprint(fingerprints []FingerprintDB, text string) []map[string]string 
 	return matches
 }
 
-type Results struct {
-	TcpScanResult int `json:"tcp_scan_result"`
-}
-
 type PortData struct {
 	Port    int                 `json:"port"`
-	Results struct{ Results }   `json:"results"`
+	Results map[string]int      `json:"results"`
 	Banner  string              `json:"banner"`
 	Recog   []map[string]string `json:"recog"`
 }
