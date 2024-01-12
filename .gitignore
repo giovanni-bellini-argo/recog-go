@@ -1,4 +1,4 @@
 **/.DS_Store
-result.json
+*.json
 *.exe
 recog-go

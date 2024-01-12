@@ -44,14 +44,19 @@ type Results struct {
 	TcpScanResult int `json:"tcp_scan_result"`
 }
 
-type HostData struct {
-	Port    int               `json:"port"`
-	Results struct{ Results } `json:"results"`
-	Banner  string            `json:"banner"`
-	Recog   []map[string]string
+type PortData struct {
+	Port    int                 `json:"port"`
+	Results struct{ Results }   `json:"results"`
+	Banner  string              `json:"banner"`
+	Recog   []map[string]string `json:"recog"`
 }
 
-type NewHosts map[string][]*HostData
+type HostData struct {
+	Ports []*PortData `json:"ports"`
+	Mac   string      `json:"mac"`
+}
+
+type NewHosts map[string]*HostData
 
 func main() {
 	/////////// Args ///////////
@@ -85,7 +90,7 @@ func main() {
 	err = json.Unmarshal(byteValue, &hosts)
 	if err == nil {
 		for _, data := range hosts {
-			for _, port := range data {
+			for _, port := range data.Ports {
 				// adds fingerprints to loaded struct
 				port.Recog = fingerprint(fingerprints, port.Banner)
 			}
