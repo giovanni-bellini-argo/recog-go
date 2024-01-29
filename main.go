@@ -94,7 +94,7 @@ func main() {
 	}
 
 	/////////// Write Results To File ///////////
-	j, err := json.MarshalIndent(hosts, "", "    ")
+	j, err := json.Marshal(hosts)
 	if err != nil {
 		fmt.Println(err)
 	}
