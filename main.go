@@ -48,8 +48,9 @@ type PortData struct {
 }
 
 type HostData struct {
-	Ports []*PortData `json:"ports"`
-	Mac   string      `json:"mac"`
+	Ports     []*PortData `json:"ports"`
+	Mac       string      `json:"mac"`
+	Discovery string      `json:"discovery"`
 }
 
 type NewHosts map[string]*HostData
